@@ -89,7 +89,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;C:\studia\PGK\projekt\lib\SDL-release-3.2.24\SDL-release-3.2.24\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;C:\studia\PGK\projekt\lib\SDL-release-3.2.24\SDL-release-3.2.24\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,11 +149,69 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\dependencies\glad\src\glad.c" />
+    <ClCompile Include="Drawable.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="sprite_anim.vrtx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="Drawable.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\vertex.vrtx" />
+    <None Include="CordVertex.vrtx" />
+    <None Include="frag.frag" />
+    <None Include="Gun.frag" />
+    <None Include="Gun.vrtx" />
+    <None Include="rotationvertex.frag" />
+    <None Include="rotationvertex.vrtx" />
+    <None Include="PlayerAnimation.frag" />
+    <None Include="PlayerAnimation.vrtx" />
+    <None Include="Player.frag">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="Player.vrtx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="Terrain.frag" />
+    <None Include="Terrain.vrtx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
