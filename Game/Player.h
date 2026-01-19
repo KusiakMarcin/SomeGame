@@ -5,7 +5,7 @@
 #include <glm.hpp>
 
 #include "GameObject.h"
-
+#include <iostream>
 #include "Texture2D.h"
 #include "SpriteRenderer.h"
 #include "ResourceManager.h"
@@ -14,32 +14,53 @@
 enum PlayerDirection {
     LEFT,
     RIGHT,
-    NONE // Brak ruchu poziomego
+    NONE 
 };
 
-class Player : GameObject
+class Player : public GameObject
 {
 public:
-    // W³aœciwoœci publiczne gracza
     
-    glm::vec2 Velocity;
+    
+    
     glm::vec3 Color;
-
-    // Zmienne fizyki
-    bool IsGrounded;   // Czy stoi na ziemi?
+    glm::vec2 CrossHairPosition;
+    glm::vec2 CrossHairSize;
+ 
+     
     bool IsMoving;
-    float Gravity;      // Si³a przyci¹gania (piksele na sekundê^2)
-    float JumpForce;    // Si³a wyskoku
-    float MoveSpeed;    // Prêdkoœæ poruszania siê w poziomie
-
-    // Tekstura gracza (Sprite)
+    bool IsFiring;
+    bool IsFacingLeft;
+    float Gravity;      
+    float JumpForce;    
+    float MoveSpeed;   
+    float FrameRate;
+    float FireAngle;
+    unsigned int currentFrame;
+    unsigned int FrameCount;
+    
     Texture2D Sprite;
 
+    glm::vec2 getPosition();
     // Konstruktor
-    Player(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec2 velocity, glm::vec3 color = glm::vec3(1.0f), float rotation = 0.0);
+    Player(glm::vec2 pos, glm::vec2 size,Texture2D sprite,
+        glm::vec3 color = glm::vec3(1.0f),
+        float rotation = 0.0);
 
     // Metoda rysuj¹ca gracza
-    void Draw(SpriteRenderer& renderer,Texture2D sprite, Shader shader,glm::mat4 projection);
+    void DrawAnimation(SpriteRenderer& renderer,Texture2D sprite, 
+        Shader shader,glm::mat4 projection);
+
+
+    void DrawIdle(SpriteRenderer& renderer, Texture2D sprite,
+        Shader shader, glm::mat4 projection);
+
+    void DrawGun(SpriteRenderer& renderer, Texture2D sprite,
+        Shader shader, glm::mat4 projection);
+
+    void DrawCrossHair(SpriteRenderer& renderer, Texture2D sprite,
+        Shader shader, glm::mat4 projection);
+
 
     // Przetwarzanie wejœcia (Ustawia prêdkoœæ X i inicjuje skok)
     void ProcessKeyboard(PlayerDirection direction, float dt);
@@ -49,7 +70,7 @@ public:
 
     // G³ówna pêtla fizyki gracza (Aplikuje grawitacjê i przesuwa postaæ)
     // window_height - potrzebne do wyznaczenia "pod³ogi"
-    void Update(float dt, float window_height);
+    void Update(float dt);
 
     // Resetowanie pozycji gracza
     void Reset(glm::vec2 position, glm::vec2 velocity);

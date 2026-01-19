@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     // Konfiguracja globalna OpenGL
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
     
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
-
+    double xpos, ypos;
     
     LoadShaders();
     LoadTextures();
@@ -87,6 +87,9 @@ int main(int argc, char* argv[])
     {
         // Obliczanie czasu klatki
         glClear(GL_COLOR_BUFFER_BIT);
+        
+        glfwGetCursorPos(window, &xpos, &ypos);
+        std::cout << xpos << "," << ypos << std::endl;
         float currentFrame = glfwGetTime();
         
         deltaTime = currentFrame - lastFrame;
@@ -96,16 +99,17 @@ int main(int argc, char* argv[])
         
         Platformer.ProcessInput(deltaTime);
         
-        Platformer.Update(deltaTime);
-        Platformer.Render();
+        Platformer.Update(deltaTime,xpos,ypos);
+        Platformer.Render(deltaTime);
+
         
         
        
-        /*float timePassed = glfwGetTime() - currentFrame;
-        while(timePassed >= 1.0f/Platformer.FrameRate)
+        float timePassed = glfwGetTime() - currentFrame;
+        while(timePassed <= 1.0f/Platformer.FrameRate)
         {
             timePassed = glfwGetTime() - currentFrame;
-        }*/
+        }
         glfwSwapBuffers(window);
     }
 
@@ -150,9 +154,12 @@ void LoadTextures()
 {
     
     ResourceManager::LoadTexture("Assets/dirt.png",true, "Dirt");
-    ResourceManager::LoadTexture("Assets/PlayerAnimation.png",true, "PlayerAnimation");
+    ResourceManager::LoadTexture("Assets/PlayerAnimation.png",true, "PlayerAnimation",GL_CLAMP_TO_EDGE);
     ResourceManager::LoadTexture("Assets/PlayerIdle.png", true, "PlayerIdle");
     ResourceManager::LoadTexture("Assets/Rifle.png",true, "Rifle");
+    ResourceManager::LoadTexture("Assets/CrossHair.png", true, "CrossHair");
     
     
 }
+
+

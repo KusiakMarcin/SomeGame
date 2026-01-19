@@ -5,6 +5,7 @@
 #include <fstream>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include <vector>
 // W prawdziwym projekcie musisz pobraæ stb_image.h i odkomentowaæ poni¿sze linie:
 
 
@@ -29,9 +30,9 @@ Shader ResourceManager::GetShader(std::string name)
     return Shaders[name];
 }
 
-Texture2D ResourceManager::LoadTexture(const char* file, bool alpha, std::string name)
+Texture2D ResourceManager::LoadTexture(const char* file, bool alpha, std::string name, unsigned int wrap)
 {
-    Textures[name] = loadTextureFromFile(file, alpha);
+    Textures[name] = loadTextureFromFile(file, alpha,wrap);
     return Textures[name];
 }
 
@@ -96,7 +97,7 @@ Shader ResourceManager::loadShaderFromFile(const char* vShaderFile, const char* 
     return shader;
 }
 
-Texture2D ResourceManager::loadTextureFromFile(const char* file, bool alpha)
+Texture2D ResourceManager::loadTextureFromFile(const char* file, bool alpha, unsigned int wrap)
 {
     // Tworzenie obiektu tekstury
     Texture2D texture;
@@ -105,6 +106,10 @@ Texture2D ResourceManager::loadTextureFromFile(const char* file, bool alpha)
         texture.Internal_Format = GL_RGBA;
         texture.Image_Format = GL_RGBA;
     }
+
+    texture.Wrap_S = wrap;
+    texture.Wrap_T = wrap;
+    
 
     // Wczytywanie obrazka
     int width, height, nrChannels;
@@ -127,3 +132,4 @@ Texture2D ResourceManager::loadTextureFromFile(const char* file, bool alpha)
     return texture;
     
 }
+

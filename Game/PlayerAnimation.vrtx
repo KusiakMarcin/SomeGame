@@ -9,13 +9,14 @@ out vec2 TexCoords;
 // Uniformy 
 uniform mat4 model;      
 uniform mat4 projection; 
-uniform float textOffset;
+uniform vec2 textOffset;
+
 
 void main()
 {
     
-    TexCoords = aTexCoords * vec2(0.25f,1.0f);
-
+    TexCoords = aTexCoords * vec2(0.25f,1.0f) +textOffset;
+ 
     
     // Kolejnoœæ mno¿enia jest kluczowa: Projekcja * Model * Wierzcho³ek
     gl_Position = projection * model * vec4(aPos,0.0, 1.0);

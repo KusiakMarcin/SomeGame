@@ -20,8 +20,10 @@ public:
     GameState    State;
     bool         Keys[1024]; // Tablica przechowuj¹ca stan klawiszy (Wciœniêty/Nie)
     unsigned int Width, Height;
+    glm::vec2 MousePosition;
     SpriteRenderer *Renderer;
     glm::mat4 projection;
+    glm::vec2 CameraPosition;
     std::vector<Terrain> TerrainObjectsList;
     float FrameRate;
     
@@ -37,10 +39,14 @@ public:
     void ProcessInput(float dt);
 
     // Pêtla Logiki (aktualizacja pozycji, fizyka)
-    void Update(float dt);
+    void Update(float dt,double mousePositionX, double mousePositionY);
 
     // Pêtla Renderowania (rysowanie)
-    void Render();
+    void Render(float frame);
+
+    void ResolveColision(GameObject& Object1, GameObject& Object2);
+
+    void LoadLevel(const char* file);
 };
 
 #endif

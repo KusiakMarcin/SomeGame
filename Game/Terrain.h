@@ -6,7 +6,7 @@
 
 enum type{DIRT,WOOD,METAL};
 
-class Terrain : GameObject
+class Terrain :public GameObject
 {
 public:
 	
@@ -21,7 +21,8 @@ public:
 
 
 	Terrain(glm::vec2 pos, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f), float rotation = 0.0 );
-	void Draw(SpriteRenderer& renderer,Texture2D sprite, Shader shader, glm::mat4 projection);
+	void Draw(SpriteRenderer& renderer,Texture2D sprite, Shader shader,
+		glm::mat4 projection, glm::vec2 cameraPos);
 
 };
 

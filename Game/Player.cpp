@@ -1,21 +1,73 @@
 #include "Player.h"
 
+glm::vec2 playerCenter(350.0f, 250.0f);
 
-Player::Player(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec2 velocity,
-    glm::vec3 color,float rotation)
-    : GameObject(pos, size,rotation), Sprite(sprite), Color(color),Velocity(velocity)
+Player::Player(glm::vec2 pos, glm::vec2 size, Texture2D sprite,
+    glm::vec3 color, float rotation)
+    : GameObject(pos, size, rotation), Sprite(sprite), Color(color), FrameRate(1.0f/8.0f),
+    FrameCount(3), currentFrame(0), IsFiring(false),CrossHairSize(glm::vec2(30.0f,30.0f)),IsFacingLeft(false)
 {
     // Konfiguracja fizyki platformowej
     this->MoveSpeed = 300.0f;   // Prêdkoœæ biegania
-    this->Gravity = 1500.0f;    // Si³a grawitacji (musi byæ du¿a w pikselach)
+    this->Gravity = 1600.0f;    // Si³a grawitacji (musi byæ du¿a w pikselach)
     this->JumpForce = 1000.0f;   // Si³a wybicia w górê
     this->IsGrounded = false;
     
 }
 
-void Player::Draw(SpriteRenderer& renderer,Texture2D sprite, Shader shader, glm::mat4 projection)
+void Player::DrawAnimation(SpriteRenderer& renderer,Texture2D sprite, Shader shader, glm::mat4 projection)
 {
-    renderer.DrawSprite(projection,sprite,shader, this->Position, this->Size, this->Rotation, this->Color);
+    sprite.Wrap_S = GL_CLAMP_TO_EDGE;
+    sprite.Wrap_T = GL_CLAMP_TO_EDGE;
+    renderer.DrawSpriteAnimation(projection,-this->Position+playerCenter, sprite, shader,
+        this->Position,
+        this->currentFrame,
+        this->FrameCount,0.25f, 
+        this->IsFacingLeft ? MIRRORED_X : NO_MIRROR,
+        this->Size, this->Rotation, this->Color);
+}
+
+
+void Player::DrawIdle(SpriteRenderer& renderer, Texture2D sprite, Shader shader, glm::mat4 projection)
+{
+    sprite.Wrap_S = GL_CLAMP_TO_EDGE;
+    sprite.Wrap_T = GL_CLAMP_TO_EDGE;
+
+    renderer.DrawSprite(projection, -this->Position+playerCenter, sprite, shader,
+        this->Position,
+        this->IsFacingLeft ? MIRRORED_X : NO_MIRROR,
+        this->Size,
+        this->Rotation,
+        this->Color);
+
+}
+
+void Player::DrawGun(SpriteRenderer& renderer, Texture2D sprite, Shader shader, glm::mat4 projection)
+{
+    sprite.Wrap_S = GL_CLAMP_TO_EDGE;
+    sprite.Wrap_T = GL_CLAMP_TO_EDGE;
+    glm::vec2 GunPosition = glm::vec2(-10.0f, 30.0f);
+    GunPosition += this->Position;
+    
+     
+    if (this->CrossHairPosition.x > 400.0f) 
+      renderer.DrawSprite(projection, -this->Position + playerCenter, sprite, shader,
+          GunPosition,NO_MIRROR, glm::vec2(60.0f,20.0f),
+        glm::degrees(FireAngle), this->Color);
+    else
+        renderer.DrawSprite(projection, -this->Position + playerCenter, sprite, shader,
+            GunPosition, MIRRORED_Y, glm::vec2(60.0f, 20.0f),
+            glm::degrees(FireAngle), this->Color);
+}
+
+void Player::DrawCrossHair(SpriteRenderer& renderer, Texture2D sprite,
+    Shader shader, glm::mat4 projection)
+{
+    glm::vec2 shift = glm::vec2(20.0f, 20.0f);
+    renderer.DrawSprite(projection, glm::vec2(0.0f, 0.0f), sprite, shader,
+        this->CrossHairPosition + shift,false,
+        this->CrossHairSize, this->Rotation, this->Color);
+
 }
 
 void Player::ProcessKeyboard(PlayerDirection direction, float dt)
@@ -24,10 +76,12 @@ void Player::ProcessKeyboard(PlayerDirection direction, float dt)
     if (direction == LEFT)
     {
         this->Velocity.x = -this->MoveSpeed;
+        IsFacingLeft = true;
     }
     else if (direction == RIGHT)
     {
         this->Velocity.x = this->MoveSpeed;
+        IsFacingLeft = false;
     }
     else // NONE
     {
@@ -37,46 +91,55 @@ void Player::ProcessKeyboard(PlayerDirection direction, float dt)
 
 void Player::Jump()
 {
-    // Mo¿emy skoczyæ tylko, jeœli stoimy na ziemi
+    
     if (this->IsGrounded)
     {
-        this->Velocity.y = -this->JumpForce; // Minus, bo Y=0 jest na górze ekranu
-        this->IsGrounded = false; // Jesteœmy w powietrzu
+        this->Velocity.y = -this->JumpForce; 
+        this->IsGrounded = false; 
     }
 }
 
-void Player::Update(float dt, float window_height)
+
+
+void Player::Update(float dt)
 {
     // 1. Aplikacja grawitacji do prêdkoœci Y
     // Zwiêkszamy prêdkoœæ w dó³ w ka¿dej klatce (symulacja przyspieszenia ziemskiego)
-    
-    this->Velocity.y += this->Gravity * dt;
+    std::cout << "velocity:" << this->Velocity.x << "," << this->Velocity.y << std::endl;
+    if (this->Velocity.x == 0.0f && this->Velocity.y == 0.0f) this->IsMoving = false;
+    else this->IsMoving = true;
 
+
+
+    this->Velocity.y += this->Gravity * dt;
+    this->FrameRate -= dt;
+    if (this->FrameRate <= 0)
+    {
+        this->currentFrame++;
+        this->FrameRate = 1.0f / 8.0f;
+    }
+
+    
+   
+    
+    
+    glm::vec2 tmp(CrossHairPosition.x - playerCenter.x,CrossHairPosition.y - playerCenter.y);
+    std::cout << "tmpx:" << tmp.x << "tmpy" << tmp.x << std::endl;
+    FireAngle = glm::atan(tmp.y, tmp.x);
+    
     // 2. Przesuniêcie gracza na podstawie prêdkoœci
     this->Position.x += this->Velocity.x * dt;
     this->Position.y += this->Velocity.y * dt;
 
-    // 3. Detekcja kolizji z "Pod³og¹" (Dó³ ekranu)
-    float groundLevel = window_height - this->Size.y;
 
-    if (this->Position.y >= groundLevel)
-    {
-        this->Position.y = groundLevel; // Przyklej do ziemi (korekcja pozycji)
-        this->Velocity.y = 0.0f;        // Zatrzymaj spadanie
-        this->IsGrounded = true;        // Flaguj, ¿e mo¿na skoczyæ
-    }
-    else
-    {
-        // Jeœli jesteœmy nad ziemi¹, to znaczy, ¿e spadamy lub skaczemy
-        this->IsGrounded = false;
-    }
-
+    if (this->Velocity.x > 1500.0f)  this->Velocity.x = 1500.0f;
+    if (this->Velocity.y > 1500.0f)  this->Velocity.y = 1500.0f;
+   
     
 
-    if (this->Velocity.x == 0.0f && this->Velocity.y == 0.0f) this->IsMoving = false;
-    else this->IsMoving = true;
-    // Tutaj mo¿na dodaæ ograniczenie z prawej strony, jeœli znasz szerokoœæ okna
-    // else if (this->Position.x + this->Size.x > window_width) { ... }
+    
+    
+    
 }
 
 void Player::Reset(glm::vec2 position, glm::vec2 velocity)
