@@ -4,11 +4,11 @@
 #include <glad/glad.h>
 #include <glm.hpp>
 
-#include "GameObject.h"
+#include "Unit.h"
+#include "Projectile.h"
 #include <iostream>
-#include "Texture2D.h"
-#include "SpriteRenderer.h"
-#include "ResourceManager.h"
+#include <vector>
+
 
 // Enum okreœlaj¹cy mo¿liwe kierunki ruchu poziomego
 enum PlayerDirection {
@@ -17,7 +17,9 @@ enum PlayerDirection {
     NONE 
 };
 
-class Player : public GameObject
+enum Weapon { RIFLE, SMG, SHOTGUN };
+
+class Player : public Unit
 {
 public:
     
@@ -26,11 +28,15 @@ public:
     glm::vec3 Color;
     glm::vec2 CrossHairPosition;
     glm::vec2 CrossHairSize;
+
+    Weapon EquipedWeapon;
  
-     
+
+    int ID;
     bool IsMoving;
-    bool IsFiring;
     bool IsFacingLeft;
+    float FireRate;
+    float IsFiring;
     float Gravity;      
     float JumpForce;    
     float MoveSpeed;   
@@ -67,6 +73,8 @@ public:
 
     // Metoda do skoku (wywo³ywana np. spacj¹)
     void Jump();
+
+    Projectile Shoot();
 
     // G³ówna pêtla fizyki gracza (Aplikuje grawitacjê i przesuwa postaæ)
     // window_height - potrzebne do wyznaczenia "pod³ogi"

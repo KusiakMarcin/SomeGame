@@ -88,6 +88,15 @@
     <ClCompile Include="Phisics.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logger.h">
@@ -138,16 +147,25 @@
     <ClInclude Include="Phisics.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Player.vrtx" />
-    <None Include="Player.frag" />
+    <None Include="Sprite.vrtx" />
+    <None Include="Sprite.frag" />
     <None Include="..\vertex.vrtx" />
     <None Include="frag.frag" />
     <None Include="rotationvertex.vrtx" />
     <None Include="rotationvertex.frag" />
-    <None Include="PlayerAnimation.vrtx" />
-    <None Include="PlayerAnimation.frag" />
+    <None Include="SpriteAnimation.vrtx" />
+    <None Include="SpriteAnimation.frag" />
     <None Include="CordVertex.vrtx" />
     <None Include="Gun.vrtx" />
     <None Include="Gun.frag" />

@@ -149,7 +149,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\dependencies\glad\src\glad.c" />
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Drawable.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -170,10 +172,13 @@
     </ClCompile>
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Drawable.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputManager.h" />
@@ -188,6 +193,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="Unit.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -198,15 +204,15 @@
     <None Include="Gun.vrtx" />
     <None Include="rotationvertex.frag" />
     <None Include="rotationvertex.vrtx" />
-    <None Include="PlayerAnimation.frag" />
-    <None Include="PlayerAnimation.vrtx" />
-    <None Include="Player.frag">
+    <None Include="SpriteAnimation.frag" />
+    <None Include="SpriteAnimation.vrtx" />
+    <None Include="Sprite.frag">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Player.vrtx">
+    <None Include="Sprite.vrtx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

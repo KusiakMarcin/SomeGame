@@ -31,7 +31,7 @@ void SpriteRenderer::DrawSpriteTerrain(glm::mat4 projection,glm::vec2 cameraPos,
     // A. Przesuniêcie do pozycji docelowej
     model = glm::translate(model, glm::vec3(position, 0.0f));
     
-    model = glm::translate(model, glm::vec3(-cameraPos, 0.0f));
+    model = glm::translate(model, glm::vec3(cameraPos, 0.0f));
 
     // B. Obrót wokó³ œrodka sprite'a
     // Domyœlnie obrót jest wokó³ (0,0), czyli lewego górnego rogu.

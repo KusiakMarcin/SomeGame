@@ -4,8 +4,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "SpriteRenderer.h"
+#include "Player.h"
 #include "Terrain.h"
-#include <vector>
+
 
 // Definicja stanów gry (Menu, Gra, Wygrana itp.)
 enum GameState {
@@ -17,15 +18,20 @@ enum GameState {
 class Game
 {
 public:
-    GameState    State;
-    bool         Keys[1024]; // Tablica przechowuj¹ca stan klawiszy (Wciœniêty/Nie)
+    GameState State;
+    bool Keys[1024]; // Tablica przechowuj¹ca stan klawiszy (Wciœniêty/Nie)
+    bool LeftMouseButton;
     unsigned int Width, Height;
     glm::vec2 MousePosition;
     SpriteRenderer *Renderer;
     glm::mat4 projection;
     glm::vec2 CameraPosition;
     std::vector<Terrain> TerrainObjectsList;
+    std::vector<Projectile> ProjectileObjectList;
+    std::vector<Unit> UnitObjectList;
     float FrameRate;
+    
+    static unsigned int UnitsIDs;
     
 
 
@@ -44,9 +50,14 @@ public:
     // Pêtla Renderowania (rysowanie)
     void Render(float frame);
 
-    void ResolveColision(GameObject& Object1, GameObject& Object2);
+    
 
     void LoadLevel(const char* file);
+
+private:
+
+    void CheckPlayerTerrainColisions();
+    void CheckProjectileColisions();
 };
 
 #endif

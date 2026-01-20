@@ -18,6 +18,7 @@ const unsigned int SCREEN_HEIGHT = 600;
 // Callbacki
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 void LoadShaders();
 void LoadTextures();
 // Inicjalizacja obiektu Gry - zmieniliœmy nazwê z Breakout na Platformer dla czytelnoœci
@@ -44,6 +45,7 @@ int main(int argc, char* argv[])
     // Rejestracja callbacków
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     // 3. £adowanie GLAD (wskaŸniki funkcji OpenGL)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -89,7 +91,7 @@ int main(int argc, char* argv[])
         glClear(GL_COLOR_BUFFER_BIT);
         
         glfwGetCursorPos(window, &xpos, &ypos);
-        std::cout << xpos << "," << ypos << std::endl;
+        
         float currentFrame = glfwGetTime();
         
         deltaTime = currentFrame - lastFrame;
@@ -136,6 +138,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        Platformer.LeftMouseButton = true;
+       
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+    {
+        Platformer.LeftMouseButton = false;
+        
+    }
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -145,8 +161,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void LoadShaders()
 {
 
-    ResourceManager::LoadShader("PlayerAnimation.vrtx","PlayerAnimation.frag",nullptr,"PlayerAnimation");
-    ResourceManager::LoadShader("Player.vrtx", "Player.frag", nullptr, "Player");
+    ResourceManager::LoadShader("SpriteAnimation.vrtx","SpriteAnimation.frag",nullptr,"SpriteAnimation");
+    ResourceManager::LoadShader("Sprite.vrtx", "Sprite.frag", nullptr, "Sprite");
     ResourceManager::LoadShader("Terrain.vrtx", "Terrain.frag", nullptr, "Terrain");
 }
 
@@ -158,6 +174,8 @@ void LoadTextures()
     ResourceManager::LoadTexture("Assets/PlayerIdle.png", true, "PlayerIdle");
     ResourceManager::LoadTexture("Assets/Rifle.png",true, "Rifle");
     ResourceManager::LoadTexture("Assets/CrossHair.png", true, "CrossHair");
+    ResourceManager::LoadTexture("Assets/Projectile.png", true, "Projectile");
+
     
     
 }

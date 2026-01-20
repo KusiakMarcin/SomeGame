@@ -11,10 +11,12 @@ SpriteRenderer* Renderer;
 Player* PlayerOne;
 Phisics* GamePhisics;
 
+unsigned int Game::UnitsIDs = 1;
+
 
 
 Game::Game(unsigned int width, unsigned int height)
-    : State(GAME_ACTIVE), Keys(), Width(width), Height(height),FrameRate(60.0f)
+    : State(GAME_ACTIVE), Keys(), Width(width), Height(height),FrameRate(60.0f), LeftMouseButton(false)
 {
     projection = glm::ortho(0.0f, static_cast<float>(this->Width),
         static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
@@ -35,7 +37,7 @@ void Game::Init()
 
     // 2. Konfiguracja macierzy projekcji (Dopasowanie do wymiarów okna)
     
-
+    
    
    
     ResourceManager::GetShader("Player").SetMatrix4("projection", projection);
@@ -50,13 +52,22 @@ void Game::Init()
     
 
     // 5. Konfiguracja Gracza
-    glm::vec2 playerPos = glm::vec2(100.0f, 400.0f); // Startowa pozycja w powietrzu
+    glm::vec2 playerPos = glm::vec2(100.0f, 410.0f); // Startowa pozycja w powietrzu
     glm::vec2 playerSize = glm::vec2(30.0f, 80.0f);  // Rozmiar gracza
     glm::vec3 playerColor = glm::vec3(1.0f, 0.0f, 0.0f); // Czerwony kolor gracza
 
     // Tworzymy obiekt gracza
     PlayerOne = new Player(playerPos, playerSize, ResourceManager::GetTexture("PlayerAnimation"), playerColor);
     LoadLevel("Levels/test.txt");
+    
+    float velocityX = 1500.0f * glm::cos(PlayerOne->FireAngle);
+    float velocityY = 1500.0f * glm::sin(PlayerOne->FireAngle);
+    Projectile newProjectile(PlayerOne->ID, PlayerOne->Position + glm::vec2(20.0f, -50.0f),
+        glm::vec2(20.0f, 10.0f),
+        glm::vec2(velocityX, velocityY),
+        30000.0f, glm::degrees(PlayerOne->FireAngle));
+    
+    ProjectileObjectList.push_back(newProjectile);
     
     
 }
@@ -70,22 +81,22 @@ void Game::Update(float dt, double mousePositionX, double mousePositionY)
     // Gracz ma myœleæ, ¿e pod³oga jest wy¿ej, na szczycie naszego gruntu.
     float effectiveHeight = this->Height - groundHeight;
     PlayerOne->CrossHairPosition = glm::vec2(mousePositionX, mousePositionY);
-    CameraPosition = PlayerOne->Position;
+    CameraPosition = -PlayerOne->Position;
 
     // Aktualizujemy fizykê gracza (ruch, grawitacja)
     
     
+    CheckPlayerTerrainColisions();
+    
+    CheckProjectileColisions();
 
-    for (int Object = 0; Object < TerrainObjectsList.size();Object++ )
+    for (int Object = 0; Object < ProjectileObjectList.size(); Object++)
     {
-        std::cout << "colision:" << GamePhisics->CheckColision(*PlayerOne, TerrainObjectsList[Object]) << std::endl;
-        if (GamePhisics->CheckColision(*PlayerOne, TerrainObjectsList[Object]))
-        {
-            ResolveColision(*PlayerOne, TerrainObjectsList[Object]);
-           
-        }
+        ProjectileObjectList[Object].Update(dt);
        
-
+        if (ProjectileObjectList[Object].FireRange <= 0.0f)
+            ProjectileObjectList.erase(ProjectileObjectList.begin() + Object);
+    
     }
 
     PlayerOne->Update(dt);
@@ -111,6 +122,10 @@ void Game::ProcessInput(float dt)
             PlayerOne->ProcessKeyboard(RIGHT, dt);
         if (this->Keys[GLFW_KEY_SPACE])
             PlayerOne->Jump();
+        if (this->LeftMouseButton && !(PlayerOne->IsFiring>0)) {
+            
+            ProjectileObjectList.push_back(PlayerOne->Shoot());
+        }
     }
 }
 
@@ -131,6 +146,14 @@ void Game::Render(float frame)
                 ResourceManager::GetShader("Terrain"),
                 projection, CameraPosition);
         }
+
+        for (int Object = 0; Object < ProjectileObjectList.size(); Object++)
+        {
+            ProjectileObjectList[Object].Draw(*Renderer,
+                ResourceManager::GetTexture("Projectile"),
+                ResourceManager::GetShader("Sprite"),
+                projection, CameraPosition);
+        }
         
         
         
@@ -143,30 +166,30 @@ void Game::Render(float frame)
 
             PlayerOne->DrawAnimation(*Renderer,
                 ResourceManager::GetTexture("PlayerAnimation"),
-                ResourceManager::GetShader("PlayerAnimation"),
+                ResourceManager::GetShader("SpriteAnimation"),
                 projection);
             PlayerOne->DrawGun(*Renderer,
                 ResourceManager::GetTexture("Rifle"),
-                ResourceManager::GetShader("Player"),
+                ResourceManager::GetShader("Sprite"),
                 projection);
             PlayerOne->DrawCrossHair(* Renderer,
                 ResourceManager::GetTexture("CrossHair"),
-                ResourceManager::GetShader("Player"),
+                ResourceManager::GetShader("Sprite"),
                 projection);
         }
         else
         {
             PlayerOne->DrawIdle(*Renderer,
                 ResourceManager::GetTexture("PlayerIdle"),
-                ResourceManager::GetShader("Player"),
+                ResourceManager::GetShader("Sprite"),
                 projection);
             PlayerOne->DrawGun(*Renderer,
                 ResourceManager::GetTexture("Rifle"),
-                ResourceManager::GetShader("Player"),
+                ResourceManager::GetShader("Sprite"),
                 projection);
             PlayerOne->DrawCrossHair(*Renderer,
                 ResourceManager::GetTexture("CrossHair"),
-                ResourceManager::GetShader("Player"),
+                ResourceManager::GetShader("Sprite"),
                 projection);
         }
     }
@@ -176,53 +199,7 @@ void Game::Render(float frame)
 
 
 
-void Game::ResolveColision(GameObject& MovableObject, GameObject& Terrain)
-{
-    float OverlapX, OverlapY;
-    bool SideX, SideY;
-    SideX = MovableObject.Position.x < Terrain.Position.x;
-    SideY = MovableObject.Position.y < Terrain.Position.y;
-    if (SideX)
-        OverlapX = std::abs(MovableObject.Position.x + MovableObject.Size.x - Terrain.Position.x);
-    else
-        OverlapX = std::abs(Terrain.Position.x + Terrain.Size.x - MovableObject.Position.x);
-    if(SideY)
-        OverlapY = std::abs(MovableObject.Position.y + MovableObject.Size.y - Terrain.Position.y);
-    else
-        OverlapY = std::abs(Terrain.Position.y + Terrain.Size.y - MovableObject.Position.y);
-    
-    if (OverlapX < OverlapY) 
-    {
-        if (SideX) 
-        { 
-            MovableObject.Position.x = Terrain.Position.x - MovableObject.Size.x; 
-            if (MovableObject.Velocity.x > 0.0f)MovableObject.Velocity.x = 0.0f;
-            
-        }
-        else 
-        {
-            MovableObject.Position.x = Terrain.Position.x + Terrain.Size.x;
-            if (MovableObject.Velocity.x < 0.0f)MovableObject.Velocity.x = 0.0f;
-        }
-    }
-    else 
-    {
-        if (SideY) 
-        { 
-            MovableObject.Position.y = Terrain.Position.y - MovableObject.Size.y; 
-            if (MovableObject.Velocity.y > 0.0f)MovableObject.Velocity.y = 0.0f;
-            MovableObject.IsGrounded = true;
-        }
-        else
-        {
-            MovableObject.Position.y = Terrain.Position.y + Terrain.Size.y;
-            if (MovableObject.Velocity.y < 0.0f)MovableObject.Velocity.y = 0.0f;
-        }
-    }
-    
 
-
-}
 
 void Game::LoadLevel(const char* LevelFile)
 {
@@ -241,7 +218,7 @@ void Game::LoadLevel(const char* LevelFile)
             std::stringstream s(text);
             s >> x >> y >> width >> height;
             std::cout << s.str() << std::endl;
-                std::cout << x << y << width << height << std::endl;;
+              
             glm::vec2 size(width, height);
             glm::vec2 position(x, y);
             Terrain tmp(position, size);
@@ -252,5 +229,47 @@ void Game::LoadLevel(const char* LevelFile)
 
     
 
+
+}
+
+
+void Game::CheckPlayerTerrainColisions()
+{
+
+
+    for (int Object = 0; Object < TerrainObjectsList.size(); Object++)
+    {
+
+        if (GamePhisics->CheckColision(*PlayerOne, TerrainObjectsList[Object]))
+        {
+            GamePhisics->ResolveColision(*PlayerOne, TerrainObjectsList[Object]);
+
+        }
+
+
+    }
+
+}
+
+void Game::CheckProjectileColisions()
+{
+    for(int ObjectP = 0; ObjectP< ProjectileObjectList.size(); ObjectP++)
+    {
+        for (int ObjectT = 0; ObjectT < TerrainObjectsList.size(); ObjectT++)
+        {
+               
+                if(GamePhisics->CheckColision(ProjectileObjectList[ObjectP],TerrainObjectsList[ObjectT]))
+                {
+                    GamePhisics->ResolveColision(ProjectileObjectList[ObjectP], TerrainObjectsList[ObjectT]);
+                    ProjectileObjectList.erase(ProjectileObjectList.begin() + ObjectP);
+
+                    break;
+                        
+
+                }
+        
+        }
+    
+    }
 
 }

@@ -12,5 +12,8 @@ void Terrain::Draw(SpriteRenderer& renderer, Texture2D sprite,
 {
 	
 	
-	renderer.DrawSpriteTerrain(projection, cameraPos-glm::vec2(350.0f,250.f), sprite, shader, this->Position, this->Size, this->Rotation, this->Color);
+	renderer.DrawSpriteTerrain(projection, cameraPos 
+		, sprite, shader,
+		this->Position + glm::vec2(350.0f, 250.f),
+		this->Size, this->Rotation, this->Color);
  }
