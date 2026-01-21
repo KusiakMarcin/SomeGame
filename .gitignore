@@ -20,3 +20,6 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+dependencies/
+x64/
+.vs/
