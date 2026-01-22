@@ -6,13 +6,15 @@ Player::Player(glm::vec2 pos, glm::vec2 size, Texture2D sprite,
     glm::vec3 color, float rotation)
     : Unit(1,pos, size,glm::vec2(3.0f,0.0f), rotation), Sprite(sprite), Color(color), FrameRate(1.0f / 8.0f),
     FrameCount(3), currentFrame(0), IsFiring(false),ID(1),
-    CrossHairSize(glm::vec2(30.0f,30.0f)),IsFacingLeft(false),EquipedWeapon(RIFLE), FireRate(1.0f)
+    CrossHairSize(glm::vec2(30.0f,30.0f)),EquipedWeapon(RIFLE), FireRate(1.0f)
 {
  
     this->MoveSpeed = 300.0f;   
     this->Gravity = 1600.0f;    
     this->JumpForce = 1000.0f;   
     this->IsGrounded = false;
+    IsKilled = false;
+    HP = 3;
     
 }
 
@@ -20,6 +22,7 @@ void Player::DrawAnimation(SpriteRenderer& renderer,Texture2D sprite, Shader sha
 {
     sprite.Wrap_S = GL_CLAMP_TO_EDGE;
     sprite.Wrap_T = GL_CLAMP_TO_EDGE;
+    
     renderer.DrawSpriteAnimation(projection,-this->Position, sprite, shader,
         this->Position + playerCenter,
         this->currentFrame,
@@ -73,7 +76,7 @@ void Player::DrawCrossHair(SpriteRenderer& renderer, Texture2D sprite,
 
 void Player::ProcessKeyboard(PlayerDirection direction, float dt)
 {
-    // W platformówce klawisze lewo/prawo ustawiaj¹ prêdkoœæ X
+   
     if (direction == LEFT)
     {
         this->Velocity.x = -this->MoveSpeed;
@@ -84,7 +87,7 @@ void Player::ProcessKeyboard(PlayerDirection direction, float dt)
         this->Velocity.x = this->MoveSpeed;
         IsFacingLeft = false;
     }
-    else // NONE
+    else 
     {
         this->Velocity.x = 0.0f;
     }
@@ -104,7 +107,8 @@ void Player::Jump()
 
 void Player::Update(float dt)
 {
-   
+    
+    if (HP < 1) IsKilled = true;
 
     if (this->Velocity.x == 0.0f && this->Velocity.y == 0.0f) this->IsMoving = false;
     else this->IsMoving = true;
@@ -126,7 +130,21 @@ void Player::Update(float dt)
     else this->IsFiring = 0.0f;
 
 
-    
+    if (WasHit > 0.0)
+    {
+
+        WasHit -= dt;
+        Color = glm::vec3(1.0f, 0.1f, 0.1f);
+    }
+    else Color = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    if (IsVunerable > 0.0&&WasHit<=0.0f)
+    {
+
+        IsVunerable -= dt;
+        Color = glm::vec3(1.2f, 1.2f, 1.2f);
+    }
+    else Color = glm::vec3(1.0f, 1.0f, 1.0f);
    
     
     
@@ -147,6 +165,17 @@ void Player::Update(float dt)
     
     
     
+}
+
+void Player::Hit()
+{
+
+    this->Velocity.y = -500.0f;
+    this->HP--;
+    WasHit = 0.5f;
+    this->IsVunerable = 1.5f;
+
+
 }
 
 Projectile Player::Shoot()

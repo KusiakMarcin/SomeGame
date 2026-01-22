@@ -27,15 +27,16 @@ Game::~Game()
 {
     delete Renderer;
     delete PlayerOne;
+    
 }
 
 void Game::Init()
 {
     // 1. £adowanie shaderów
-    // U¿ywamy standardowego shadera sprite (zak³adamy, ¿e obs³uguje uniform 'spriteColor')
+    
     ResourceManager::LoadShader("Player.vrtx", "Player.frag", nullptr, "Player");
 
-    // 2. Konfiguracja macierzy projekcji (Dopasowanie do wymiarów okna)
+    // 2. Konfiguracja macierzy projekcji 
     
     
    
@@ -47,39 +48,27 @@ void Game::Init()
     Renderer = new SpriteRenderer(tmp);
 
 
-    // 4. £adowanie tekstur
-    // U¿ywamy tekstury 'block.png' jako bazowego bia³ego kwadratu dla wszystkich obiektów
-    
+  
 
+    UnitObjectsList.push_back(std::make_unique<Crawler>(2, glm::vec2(100.0f, 300.0f), glm::vec2(50.0f, 30.0f),
+        glm::vec2(50.0f, 30.0f)));
     // 5. Konfiguracja Gracza
-    glm::vec2 playerPos = glm::vec2(100.0f, 410.0f); // Startowa pozycja w powietrzu
+    glm::vec2 playerPos = glm::vec2(100.0f, 380.0f); // Startowa pozycja w powietrzu
     glm::vec2 playerSize = glm::vec2(30.0f, 80.0f);  // Rozmiar gracza
-    glm::vec3 playerColor = glm::vec3(1.0f, 0.0f, 0.0f); // Czerwony kolor gracza
+    glm::vec3 playerColor = glm::vec3(1.0f, 1.0f, 1.0f); 
 
     // Tworzymy obiekt gracza
     PlayerOne = new Player(playerPos, playerSize, ResourceManager::GetTexture("PlayerAnimation"), playerColor);
     LoadLevel("Levels/test.txt");
     
-    float velocityX = 1500.0f * glm::cos(PlayerOne->FireAngle);
-    float velocityY = 1500.0f * glm::sin(PlayerOne->FireAngle);
-    Projectile newProjectile(PlayerOne->ID, PlayerOne->Position + glm::vec2(20.0f, -50.0f),
-        glm::vec2(20.0f, 10.0f),
-        glm::vec2(velocityX, velocityY),
-        30000.0f, glm::degrees(PlayerOne->FireAngle));
     
-    ProjectileObjectList.push_back(newProjectile);
-    
+  
     
 }
 
 void Game::Update(float dt, double mousePositionX, double mousePositionY)
 {
-    // Definiujemy wysokoœæ gruntu (taka sama jak w Render)
-    float groundHeight = 100.0f;
-
-    // Obliczamy "efektywn¹" wysokoœæ ekranu dla fizyki gracza.
-    // Gracz ma myœleæ, ¿e pod³oga jest wy¿ej, na szczycie naszego gruntu.
-    float effectiveHeight = this->Height - groundHeight;
+    
     PlayerOne->CrossHairPosition = glm::vec2(mousePositionX, mousePositionY);
     CameraPosition = -PlayerOne->Position;
 
@@ -90,16 +79,44 @@ void Game::Update(float dt, double mousePositionX, double mousePositionY)
     
     CheckProjectileColisions();
 
-    for (int Object = 0; Object < ProjectileObjectList.size(); Object++)
+    CheckUnitTerrainColisions();
+
+    CheckUnitProjectileColisions();
+
+    CheckPlayerUnitColisions();
+
+    for (int Object = 0; Object < ProjectileObjectsList.size(); Object++)
     {
-        ProjectileObjectList[Object].Update(dt);
-       
-        if (ProjectileObjectList[Object].FireRange <= 0.0f)
-            ProjectileObjectList.erase(ProjectileObjectList.begin() + Object);
+        ProjectileObjectsList[Object].Update(dt);
+        
+        if (ProjectileObjectsList[Object].FireRange <= 0.0f)
+            ProjectileObjectsList.erase(ProjectileObjectsList.begin() + Object);
     
     }
 
+    for (int Object = 0; Object < UnitObjectsList.size(); Object++)
+    {
+
+        UnitObjectsList[Object]->Update(dt);
+        if (UnitObjectsList[Object]->IsKilled) {
+            std::cout << "erase" << std::endl;
+            UnitObjectsList.erase(UnitObjectsList.begin() + Object);
+            continue;
+        }
+        if (UnitObjectsList[Object]->HP < 1) {
+            std::cout << "death" << std::endl;
+            UnitObjectsList[Object]->Death();
+            
+        }
+           
+      
+
+    }
+
     PlayerOne->Update(dt);
+    if (PlayerOne->IsKilled) {
+        //GameOver();
+    }
 
     
     
@@ -124,13 +141,14 @@ void Game::ProcessInput(float dt)
             PlayerOne->Jump();
         if (this->LeftMouseButton && !(PlayerOne->IsFiring>0)) {
             
-            ProjectileObjectList.push_back(PlayerOne->Shoot());
+            ProjectileObjectsList.push_back(PlayerOne->Shoot());
         }
     }
 }
 
 void Game::Render(float frame)
 { 
+   
     if (this->State == GAME_ACTIVE)
     {
         // 1. Rysowanie T³a (Opcjonalnie - np. b³êkitne niebo)
@@ -147,14 +165,22 @@ void Game::Render(float frame)
                 projection, CameraPosition);
         }
 
-        for (int Object = 0; Object < ProjectileObjectList.size(); Object++)
+        for (int Object = 0; Object < ProjectileObjectsList.size(); Object++)
         {
-            ProjectileObjectList[Object].Draw(*Renderer,
+            ProjectileObjectsList[Object].Draw(*Renderer,
                 ResourceManager::GetTexture("Projectile"),
                 ResourceManager::GetShader("Sprite"),
                 projection, CameraPosition);
         }
         
+        for (int Object = 0; Object < UnitObjectsList.size(); Object++)
+        {
+            UnitObjectsList[Object]->DrawAnimation(*Renderer,
+                ResourceManager::GetTexture("Crawler"),
+                ResourceManager::GetShader("SpriteAnimation"),
+                projection, CameraPosition);
+        }
+
         
         
         
@@ -251,17 +277,36 @@ void Game::CheckPlayerTerrainColisions()
 
 }
 
+void Game::CheckPlayerUnitColisions()
+{
+
+
+    for (int Object = 0; Object < UnitObjectsList.size(); Object++)
+    {
+
+        if (GamePhisics->CheckColision(*PlayerOne, *UnitObjectsList[Object].get()))
+        {
+            GamePhisics->ResolveColision(PlayerOne, *UnitObjectsList[Object].get());
+
+        }
+
+
+    }
+
+}
+
 void Game::CheckProjectileColisions()
 {
-    for(int ObjectP = 0; ObjectP< ProjectileObjectList.size(); ObjectP++)
+    for(int ObjectP = 0; ObjectP< ProjectileObjectsList.size(); ObjectP++)
     {
         for (int ObjectT = 0; ObjectT < TerrainObjectsList.size(); ObjectT++)
         {
                
-                if(GamePhisics->CheckColision(ProjectileObjectList[ObjectP],TerrainObjectsList[ObjectT]))
+                if(GamePhisics->CheckColision(ProjectileObjectsList[ObjectP],TerrainObjectsList[ObjectT]))
                 {
-                    GamePhisics->ResolveColision(ProjectileObjectList[ObjectP], TerrainObjectsList[ObjectT]);
-                    ProjectileObjectList.erase(ProjectileObjectList.begin() + ObjectP);
+                    //std::cout << "colision" << std::endl;
+                    GamePhisics->ResolveColision(ProjectileObjectsList[ObjectP], TerrainObjectsList[ObjectT]);
+                    ProjectileObjectsList.erase(ProjectileObjectsList.begin() + ObjectP);
 
                     break;
                         
@@ -273,3 +318,54 @@ void Game::CheckProjectileColisions()
     }
 
 }
+
+void Game::CheckUnitTerrainColisions()
+{
+
+    
+        for (int ObjectP = 0; ObjectP < UnitObjectsList.size(); ObjectP++)
+        {
+            for (int ObjectT = 0; ObjectT < TerrainObjectsList.size(); ObjectT++)
+            {
+               
+                if (GamePhisics->CheckColision(UnitObjectsList[ObjectP].get(), TerrainObjectsList[ObjectT]))
+                {
+                    
+                    GamePhisics->ResolveColision(UnitObjectsList[ObjectP].get(), TerrainObjectsList[ObjectT]);
+                    
+
+
+                }
+
+            }
+
+        }
+
+    
+
+
+
+}
+void Game::CheckUnitProjectileColisions()
+{
+
+    for (int ObjectP = 0; ObjectP < UnitObjectsList.size(); ObjectP++)
+    {
+        for (int ObjectT = 0; ObjectT < ProjectileObjectsList.size(); ObjectT++)
+        {
+           
+            if (GamePhisics->CheckColision(ProjectileObjectsList[ObjectT],UnitObjectsList[ObjectP].get()))
+            {
+
+                GamePhisics->ResolveColision( ProjectileObjectsList[ObjectT],UnitObjectsList[ObjectP].get());
+                ProjectileObjectsList.erase(ProjectileObjectsList.begin() + ObjectP);
+
+
+            }
+
+        }
+
+    }
+}
+
+

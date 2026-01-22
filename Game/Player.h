@@ -28,20 +28,21 @@ public:
     glm::vec3 Color;
     glm::vec2 CrossHairPosition;
     glm::vec2 CrossHairSize;
+    
 
     Weapon EquipedWeapon;
  
 
     int ID;
-    bool IsMoving;
-    bool IsFacingLeft;
+    
+
     float FireRate;
     float IsFiring;
-    float Gravity;      
-    float JumpForce;    
-    float MoveSpeed;   
     float FrameRate;
     float FireAngle;
+    float IsVunerable;
+    
+
     unsigned int currentFrame;
     unsigned int FrameCount;
     
@@ -75,6 +76,7 @@ public:
     void Jump();
 
     Projectile Shoot();
+    void Hit();
 
     // G³ówna pêtla fizyki gracza (Aplikuje grawitacjê i przesuwa postaæ)
     // window_height - potrzebne do wyznaczenia "pod³ogi"

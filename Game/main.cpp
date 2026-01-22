@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
     
     
-
+    
     
    
     
@@ -104,6 +104,7 @@ int main(int argc, char* argv[])
         Platformer.Update(deltaTime,xpos,ypos);
         Platformer.Render(deltaTime);
 
+       
         
         
        
@@ -125,9 +126,11 @@ int main(int argc, char* argv[])
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
     // Wyjœcie z gry pod ESC
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+     
         glfwSetWindowShouldClose(window, true);
-
+        
+    }
     // Aktualizacja stanu klawiszy w obiekcie Game
     if (key >= 0 && key < 1024)
     {
@@ -161,9 +164,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void LoadShaders()
 {
 
-    ResourceManager::LoadShader("SpriteAnimation.vrtx","SpriteAnimation.frag",nullptr,"SpriteAnimation");
-    ResourceManager::LoadShader("Sprite.vrtx", "Sprite.frag", nullptr, "Sprite");
-    ResourceManager::LoadShader("Terrain.vrtx", "Terrain.frag", nullptr, "Terrain");
+    ResourceManager::LoadShader("Shaders/SpriteAnimation.vrtx","Shaders/SpriteAnimation.frag",nullptr,"SpriteAnimation");
+    ResourceManager::LoadShader("Shaders/Sprite.vrtx", "Shaders/Sprite.frag", nullptr, "Sprite");
+    ResourceManager::LoadShader("Shaders/Terrain.vrtx", "Shaders/Terrain.frag", nullptr, "Terrain");
 }
 
 void LoadTextures()
@@ -175,6 +178,7 @@ void LoadTextures()
     ResourceManager::LoadTexture("Assets/Rifle.png",true, "Rifle");
     ResourceManager::LoadTexture("Assets/CrossHair.png", true, "CrossHair");
     ResourceManager::LoadTexture("Assets/Projectile.png", true, "Projectile");
+    ResourceManager::LoadTexture("Assets/Crawler.png", true, "Crawler");
 
     
     

@@ -46,7 +46,7 @@ void SpriteRenderer::DrawSpriteTerrain(glm::mat4 projection,glm::vec2 cameraPos,
 
     // 2. Ustawienie uniformów
     shader.SetMatrix4("model", model);
-    
+    shader.SetVector3f("ourColor", color);
      
     // 3. Rysowanie
     glActiveTexture(GL_TEXTURE0);
@@ -87,13 +87,15 @@ void SpriteRenderer::DrawSpriteAnimation(glm::mat4 projection, glm::vec2 cameraP
     
     // 2. Ustawienie uniformów
     shader.SetMatrix4("model", model);
-    shader.SetVector3f("spriteColor", color);
+    shader.SetVector3f("ourColor", color);
     shader.SetVector2f("textOffset", frameWidth*(frame%frameCount), 0.0f);
     shader.SetVector2f("texScale", 1.0f, 1.0f);
+    shader.SetFloat("textWidth", frameWidth);
+    
 
     // 3. Rysowanie
     glActiveTexture(GL_TEXTURE0);
-    texture.Bind(); // Zak³adamy metodê Bind() w klasie Texture2D
+    texture.Bind(); 
 
     switch (mirrored) {
 
@@ -149,7 +151,7 @@ void SpriteRenderer::DrawSprite(glm::mat4 projection,glm::vec2 cameraPos , Textu
 
     // 2. Ustawienie uniformów
     shader.SetMatrix4("model", model);
-    shader.SetVector3f("spriteColor", color);
+    shader.SetVector3f("ourColor", color);
     shader.SetVector2f("texScale", 1.0f, 1.0f);
 
     // 3. Rysowanie

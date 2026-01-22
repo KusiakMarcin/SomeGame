@@ -5,19 +5,21 @@ layout (location = 1) in vec2 aTexCoords;
 
 
 out vec2 TexCoords;
+out vec3 ShiftColor;
 
 // Uniformy 
 uniform mat4 model;      
 uniform mat4 projection; 
 uniform vec2 textOffset;
-
+uniform float textWidth;
+uniform vec3 ourColor;
 
 void main()
 {
     
-    TexCoords = aTexCoords * vec2(0.25f,1.0f) +textOffset;
- 
+    TexCoords = aTexCoords * vec2(textWidth,1.0f) +textOffset;
+    ShiftColor = ourColor;
     
-    // Kolejnoœæ mno¿enia jest kluczowa: Projekcja * Model * Wierzcho³ek
+    
     gl_Position = projection * model * vec4(aPos,0.0, 1.0);
 }

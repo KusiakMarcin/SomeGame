@@ -17,6 +17,7 @@ public:
 	
 	
 	float Rotation;
+	GameObject();
 	GameObject(glm::vec2 pos, glm::vec2 size, float rotation = 0.0,
 		bool isPhisical = true);
 	~GameObject();

@@ -34,6 +34,12 @@
     <Filter Include="Header Files\Objects">
       <UniqueIdentifier>{944f47bc-6f0a-4238-a9aa-23f92342af43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Enemies">
+      <UniqueIdentifier>{04c1cf05-5d68-4ca9-bc4a-0b353ffd703e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Enemies">
+      <UniqueIdentifier>{448307d8-b537-460f-8fc7-53c24fe1b8db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -49,9 +55,6 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
@@ -79,9 +82,6 @@
     <ClCompile Include="Texture2D.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Projectile.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
@@ -91,11 +91,17 @@
     <ClCompile Include="Unit.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Inteligent.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Crawler.cpp">
+      <Filter>Source Files\Enemies</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,12 +109,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Window.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
@@ -138,9 +138,6 @@
     <ClInclude Include="Texture2D.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectManager.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Projectile.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
@@ -150,11 +147,23 @@
     <ClInclude Include="Unit.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Inteligent.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Crawler.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

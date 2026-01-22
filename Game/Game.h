@@ -5,12 +5,14 @@
 #include <GLFW/glfw3.h>
 #include "SpriteRenderer.h"
 #include "Player.h"
+#include "Crawler.h"
 #include "Terrain.h"
 
 
 // Definicja stanów gry (Menu, Gra, Wygrana itp.)
 enum GameState {
     GAME_ACTIVE,
+    GAME_OVER,
     GAME_MENU,
     GAME_WIN
 };
@@ -27,8 +29,8 @@ public:
     glm::mat4 projection;
     glm::vec2 CameraPosition;
     std::vector<Terrain> TerrainObjectsList;
-    std::vector<Projectile> ProjectileObjectList;
-    std::vector<Unit> UnitObjectList;
+    std::vector<Projectile> ProjectileObjectsList;
+    std::vector<std::unique_ptr<Enemy>> UnitObjectsList;
     float FrameRate;
     
     static unsigned int UnitsIDs;
@@ -55,9 +57,14 @@ public:
     void LoadLevel(const char* file);
 
 private:
-
+   
     void CheckPlayerTerrainColisions();
+    void CheckPlayerUnitColisions();
+
+
     void CheckProjectileColisions();
+    void CheckUnitTerrainColisions();
+    void CheckUnitProjectileColisions();
 };
 
 #endif

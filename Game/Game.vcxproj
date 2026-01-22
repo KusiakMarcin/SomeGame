@@ -150,14 +150,15 @@
   <ItemGroup>
     <ClCompile Include="..\dependencies\glad\src\glad.c" />
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Crawler.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Inteligent.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="Phisics.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
@@ -173,17 +174,18 @@
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Unit.cpp" />
-    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Crawler.h" />
     <ClInclude Include="Drawable.h" />
+    <ClInclude Include="Enemies.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Inteligent.h" />
     <ClInclude Include="Logger.h" />
-    <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="Phisics.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
@@ -194,7 +196,6 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Unit.h" />
-    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\vertex.vrtx" />

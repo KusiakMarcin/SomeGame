@@ -7,7 +7,11 @@ GameObject::GameObject(glm::vec2 pos, glm::vec2 size, float rotation, bool isPhi
 	
 }
 
+GameObject::GameObject()
+{
+	;
 
+}
 
 GameObject::~GameObject()
 {

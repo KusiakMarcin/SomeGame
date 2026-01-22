@@ -3,7 +3,7 @@
 
 Projectile::Projectile(int sourceID,glm::vec2 pos, glm::vec2 size,glm::vec2 velocity,float fireRange, float rotation)
 	: GameObject(pos,size,rotation), Velocity(velocity), FireRange(fireRange),
-    SourceID(sourceID), Color(glm::vec3(1.0f,0.0f,0.0f))
+    SourceID(sourceID), Color(glm::vec3(1.0f,1.0f,1.0f))
 {
 
     Radius = size.y/2.0f;
