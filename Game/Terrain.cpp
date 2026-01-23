@@ -1,9 +1,35 @@
 #include "Terrain.h"
 
 
-Terrain::Terrain(glm::vec2 pos, glm::vec2 size,glm::vec3 color, float rotation) 
-	: GameObject(pos, size, rotation), Color(color)
+Terrain::Terrain(glm::vec2 pos, glm::vec2 size, const char* terrainClass,glm::vec3 color, float rotation)
+	: GameObject(pos, size, rotation), Color(color),TerrainClass(terrainClass)
 {
+	IsPhisical = true;
+	isDestructable = false;
+	isHarmful = false;
+
+	if(terrainClass == "Dirt")
+	{
+		IsPhisical = true;
+		isDestructable = false;
+		isHarmful = false;
+		
+	}
+	if (terrainClass == "Magma")
+	{
+		IsPhisical = true;
+		isDestructable = false;
+		isHarmful = true;
+
+	}
+	if (terrainClass == "Wood")
+	{
+		IsPhisical = true;
+		isDestructable = true;
+		isHarmful = false;
+
+	}
+	
 	 
 }
 

@@ -5,22 +5,27 @@
 #include <sstream>
 #include "Phisics.h"
 #include <iostream>
+#include "Menu.h"
+
 
 // WskaŸniki na obiekty gry
 SpriteRenderer* Renderer;
 Player* PlayerOne;
 Phisics* GamePhisics;
-
-unsigned int Game::UnitsIDs = 1;
+Interface GameInterface;
+TextRenderer* Text;
+Menu GameMenu;
 
 
 
 Game::Game(unsigned int width, unsigned int height)
-    : State(GAME_ACTIVE), Keys(), Width(width), Height(height),FrameRate(60.0f), LeftMouseButton(false)
+    : State(GAME_MENU), Keys(), Width(width), Height(height),FrameRate(60.0f), LeftMouseButton(false)
 {
     projection = glm::ortho(0.0f, static_cast<float>(this->Width),
         static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
     CameraPosition = glm::vec2(0.0f,0.0f);
+   
+    
 }
 
 Game::~Game()
@@ -32,47 +37,52 @@ Game::~Game()
 
 void Game::Init()
 {
-    // 1. £adowanie shaderów
-    
-    ResourceManager::LoadShader("Player.vrtx", "Player.frag", nullptr, "Player");
+  
 
-    // 2. Konfiguracja macierzy projekcji 
     
     
-   
+    GameInterface = Interface();
    
     ResourceManager::GetShader("Player").SetMatrix4("projection", projection);
-
+    ResourceManager::LoadTexture("Assets/White.png", true, "White");
     // 3. Inicjalizacja Renderera
     Shader tmp = ResourceManager::GetShader("sprite");
     Renderer = new SpriteRenderer(tmp);
+    
+    Text = new TextRenderer(Width, Height);
+    Text->Load("Assets/Arial.ttf", 40);
+    GameMenu.AddItem(
+        { 300, 250 }, { 200, 60 }, "GRAJ",
+        [this]() { LoadLevel("Levels/test3.txt"); }
+    );
 
-
+    GameMenu.AddItem(
+        { 300, 330 }, { 200, 60 }, "WYJSCIE",
+        [this]() { State = GAME_EXIT; }
+    );
   
 
-    UnitObjectsList.push_back(std::make_unique<Crawler>(2, glm::vec2(100.0f, 300.0f), glm::vec2(50.0f, 30.0f),
-        glm::vec2(50.0f, 30.0f)));
-    // 5. Konfiguracja Gracza
-    glm::vec2 playerPos = glm::vec2(100.0f, 380.0f); // Startowa pozycja w powietrzu
-    glm::vec2 playerSize = glm::vec2(30.0f, 80.0f);  // Rozmiar gracza
-    glm::vec3 playerColor = glm::vec3(1.0f, 1.0f, 1.0f); 
+    
+   
+    //LoadLevel("Levels/test3.txt");
 
     // Tworzymy obiekt gracza
-    PlayerOne = new Player(playerPos, playerSize, ResourceManager::GetTexture("PlayerAnimation"), playerColor);
-    LoadLevel("Levels/test.txt");
     
+   
     
-  
     
 }
-
+void Game::Menu()
+{
+    GameMenu.Draw(*Renderer, *Text, this->projection);
+}
 void Game::Update(float dt, double mousePositionX, double mousePositionY)
 {
     
     PlayerOne->CrossHairPosition = glm::vec2(mousePositionX, mousePositionY);
     CameraPosition = -PlayerOne->Position;
 
-    // Aktualizujemy fizykê gracza (ruch, grawitacja)
+    
     
     
     CheckPlayerTerrainColisions();
@@ -97,14 +107,21 @@ void Game::Update(float dt, double mousePositionX, double mousePositionY)
     for (int Object = 0; Object < UnitObjectsList.size(); Object++)
     {
 
-        UnitObjectsList[Object]->Update(dt);
+        UnitObjectsList[Object]->Update(dt, *PlayerOne);
         if (UnitObjectsList[Object]->IsKilled) {
-            std::cout << "erase" << std::endl;
+            //std::cout << "erase" << std::endl;
             UnitObjectsList.erase(UnitObjectsList.begin() + Object);
             continue;
         }
+        if (UnitObjectsList[Object]->PlayerDetected)
+        {
+            if (UnitObjectsList[Object]->ClassEnemy == "Sentry"&& UnitObjectsList[Object]->FireCooldown<=0.0f)
+                ProjectileObjectsList.push_back(UnitObjectsList[Object]->Shoot());
+            else UnitObjectsList[Object]->Atack();
+
+        }
         if (UnitObjectsList[Object]->HP < 1) {
-            std::cout << "death" << std::endl;
+            //std::cout << "death" << std::endl;
             UnitObjectsList[Object]->Death();
             
         }
@@ -115,7 +132,10 @@ void Game::Update(float dt, double mousePositionX, double mousePositionY)
 
     PlayerOne->Update(dt);
     if (PlayerOne->IsKilled) {
-        //GameOver();
+        this->State = GAME_OVER;
+        GameOverClear();
+
+
     }
 
     
@@ -125,6 +145,32 @@ void Game::Update(float dt, double mousePositionX, double mousePositionY)
 
 void Game::ProcessInput(float dt)
 {
+    if (State == GAME_MENU)
+    {
+        // Przekazujemy sterowanie do menu
+        if (this->Keys[GLFW_KEY_W])
+            GameMenu.SelectPrev();
+
+        if (this->Keys[GLFW_KEY_S])
+            GameMenu.SelectNext();
+
+        if (this->Keys[GLFW_KEY_ENTER])
+        {
+            GameMenu.ExecuteSelected();
+            this->State= GAME_ACTIVE;
+        }
+        return;
+    }
+    if (State == GAME_OVER)
+    {
+        
+        if (this->Keys[GLFW_KEY_ENTER])
+        {
+            
+            this->State = GAME_MENU;
+        }
+        return;
+    }
     if (this->State == GAME_ACTIVE)
     {
         // Domyœlnie brak ruchu poziomego (hamowanie)
@@ -141,7 +187,10 @@ void Game::ProcessInput(float dt)
             PlayerOne->Jump();
         if (this->LeftMouseButton && !(PlayerOne->IsFiring>0)) {
             
+            
             ProjectileObjectsList.push_back(PlayerOne->Shoot());
+            /*std::cout << "Shoot()"<< ProjectileObjectsList.back().Position.x <<"," 
+                << ProjectileObjectsList.back().FireRange << std::endl;*/
         }
     }
 }
@@ -149,18 +198,22 @@ void Game::ProcessInput(float dt)
 void Game::Render(float frame)
 { 
    
-    if (this->State == GAME_ACTIVE)
-    {
+    if (this->State == GAME_OVER){
+        Texture2D tmp = ResourceManager::GetTexture("GameOver");
+        Renderer->GameOver(tmp,ResourceManager::GetShader("GameOver"));
+    }
+    if(this->State ==GAME_ACTIVE){
         // 1. Rysowanie T³a (Opcjonalnie - np. b³êkitne niebo)
         
-        // 2. Rysowanie terenu
-       
-
+        
+        Texture2D tmp = ResourceManager::GetTexture("Heart");
+        GameInterface.DrawHUD(*Renderer, ResourceManager::GetShader("Sprite"),
+             *PlayerOne,tmp , projection);
 
         for (int Object = 0; Object < TerrainObjectsList.size(); Object++)
         {
             TerrainObjectsList[Object].Draw(*Renderer,
-                ResourceManager::GetTexture("Dirt"),
+                ResourceManager::GetTexture(TerrainObjectsList[Object].TerrainClass),
                 ResourceManager::GetShader("Terrain"),
                 projection, CameraPosition);
         }
@@ -173,12 +226,30 @@ void Game::Render(float frame)
                 projection, CameraPosition);
         }
         
-        for (int Object = 0; Object < UnitObjectsList.size(); Object++)
+       
+        for (int i = 0; i < UnitObjectsList.size(); i++)
         {
-            UnitObjectsList[Object]->DrawAnimation(*Renderer,
-                ResourceManager::GetTexture("Crawler"),
-                ResourceManager::GetShader("SpriteAnimation"),
-                projection, CameraPosition);
+            auto& unit = UnitObjectsList[i];
+
+            // Pobieramy teksturê na podstawie nazwy klasy (np. "Crawler", "Flyer", "Sentry")
+            Texture2D texture = ResourceManager::GetTexture(unit->ClassEnemy);
+            
+
+            if (unit->ClassEnemy == "Sentry")
+            {
+                
+               
+                unit->DrawGun(*Renderer, ResourceManager::GetTexture("Canon"), ResourceManager::GetShader("Sprite"), projection, CameraPosition);
+                
+                unit->Draw(*Renderer, ResourceManager::GetTexture("Sentry"), ResourceManager::GetShader("Sprite"), projection, CameraPosition);
+
+               
+            }
+            else
+            {
+                 //Reszta (Crawler, Flyer) korzysta z animacji
+                unit->DrawAnimation(*Renderer, texture, ResourceManager::GetShader("SpriteAnimation"), projection, CameraPosition);
+            }
         }
 
         
@@ -219,6 +290,7 @@ void Game::Render(float frame)
                 projection);
         }
     }
+    
 
    
 }
@@ -240,16 +312,101 @@ void Game::LoadLevel(const char* LevelFile)
         {
             if (text.empty() || text[0] == '#')
                 continue;
-            float x, y, width, height;
             std::stringstream s(text);
-            s >> x >> y >> width >> height;
-            std::cout << s.str() << std::endl;
-              
-            glm::vec2 size(width, height);
-            glm::vec2 position(x, y);
-            Terrain tmp(position, size);
-            TerrainObjectsList.push_back(tmp);
-            std::cout << TerrainObjectsList.back().Position.x<<TerrainObjectsList.back().Position.y << std::endl;
+            char ctrl;
+            s >> ctrl;
+            switch (ctrl) {
+            case 'P':
+                float x, y;
+                s >> x >> y;
+                glm::vec2 size(30.0f, 80.0f);
+                glm::vec2 position(x, y);
+                glm::vec3 playerColor = glm::vec3(1.0f, 1.0f, 1.0f);
+                PlayerOne = new Player(position, size, ResourceManager::GetTexture("PlayerAnimation"), playerColor);
+                break;
+            case 'D':
+            {
+                float x, y, width, height;
+
+                s >> x >> y >> width >> height;
+                //std::cout << s.str() << std::endl;
+
+                glm::vec2 size(width, height);
+                glm::vec2 position(x, y);
+                
+                Terrain tmp(position, size,"Dirt");
+                TerrainObjectsList.push_back(tmp);
+                //std::cout << TerrainObjectsList.back().Position.x << TerrainObjectsList.back().Position.y << std::endl;
+                break;
+            }
+            case 'W':
+            {
+                float x, y, width, height;
+
+                s >> x >> y >> width >> height;
+                //std::cout << s.str() << std::endl;
+
+                glm::vec2 size(width, height);
+                glm::vec2 position(x, y);
+
+                Terrain tmp(position, size, "Wood");
+                TerrainObjectsList.push_back(tmp);
+                //std::cout << TerrainObjectsList.back().Position.x << TerrainObjectsList.back().Position.y << std::endl;
+                break;
+            }
+            case 'M':
+            {
+                float x, y, width, height;
+
+                s >> x >> y >> width >> height;
+                //std::cout << s.str() << std::endl;
+
+                glm::vec2 size(width, height);
+                glm::vec2 position(x, y);
+
+                Terrain tmp(position, size, "Magma");
+                TerrainObjectsList.push_back(tmp);
+                //std::cout << TerrainObjectsList.back().Position.x << TerrainObjectsList.back().Position.y << std::endl;
+                break;
+            }
+            case 'C':
+            {
+                int id;
+                float x, y;
+                s >> id >> x >> y;
+                glm::vec2 size(60.0f, 40.0f);
+                glm::vec2 position(x, y);
+                glm::vec2 hitbox(15.0f, 10.0f);
+                UnitObjectsList.push_back(std::make_unique<Crawler>(id, position, size,hitbox));
+
+                break;
+            }
+            case 'F':
+            {
+                int id;
+                float x, y;
+                s >> id >> x >> y;
+                glm::vec2 size(60.0f, 30.0f);
+                glm::vec2 position(x, y);
+                glm::vec2 hitbox(10.0f, 15.0f);
+                UnitObjectsList.push_back(std::make_unique<Flyer>(id, position, size, hitbox));
+
+                break;
+            }
+             case 'S':
+            {
+                int id;
+                float x, y;
+                s >> id >> x >> y;
+                glm::vec2 size(40.0f, 40.0f);
+                glm::vec2 position(x, y);
+                glm::vec2 hitbox(0.0f, 0.0f);
+                UnitObjectsList.push_back(std::make_unique<Sentry>(id, position, size, hitbox));
+
+                break;
+            }
+
+            }
         }
     }
 
@@ -269,6 +426,7 @@ void Game::CheckPlayerTerrainColisions()
         if (GamePhisics->CheckColision(*PlayerOne, TerrainObjectsList[Object]))
         {
             GamePhisics->ResolveColision(*PlayerOne, TerrainObjectsList[Object]);
+            if(TerrainObjectsList[Object].isHarmful) PlayerOne->Hit();
 
         }
 
@@ -307,7 +465,11 @@ void Game::CheckProjectileColisions()
                     //std::cout << "colision" << std::endl;
                     GamePhisics->ResolveColision(ProjectileObjectsList[ObjectP], TerrainObjectsList[ObjectT]);
                     ProjectileObjectsList.erase(ProjectileObjectsList.begin() + ObjectP);
+                    if (TerrainObjectsList[ObjectT].isDestructable) {
 
+                        TerrainObjectsList.erase(TerrainObjectsList.begin() + ObjectT);
+                    }
+                    
                     break;
                         
 
@@ -358,7 +520,7 @@ void Game::CheckUnitProjectileColisions()
             {
 
                 GamePhisics->ResolveColision( ProjectileObjectsList[ObjectT],UnitObjectsList[ObjectP].get());
-                ProjectileObjectsList.erase(ProjectileObjectsList.begin() + ObjectP);
+                ProjectileObjectsList.erase(ProjectileObjectsList.begin() + ObjectT);
 
 
             }
@@ -366,6 +528,52 @@ void Game::CheckUnitProjectileColisions()
         }
 
     }
+    for (int ObjectT = 0; ObjectT < ProjectileObjectsList.size(); ObjectT++)
+    {
+
+        if (GamePhisics->CheckColision(ProjectileObjectsList[ObjectT], *PlayerOne))
+        {
+
+            if (ProjectileObjectsList[ObjectT].SourceID != 1) { 
+                
+                PlayerOne->Hit();
+                ProjectileObjectsList.erase(ProjectileObjectsList.begin() + ObjectT);
+            }
+            
+
+
+        }
+
+    }
+
 }
 
 
+void Game::GameOverClear()
+{
+
+
+    for (int Object = ProjectileObjectsList.size()-1; Object >-1; Object--)
+    {
+        ProjectileObjectsList.erase(ProjectileObjectsList.begin() + Object);
+
+       
+
+    }
+    for (int Object = TerrainObjectsList.size()-1; Object > -1; Object--)
+    {
+        TerrainObjectsList.erase(TerrainObjectsList.begin() + Object);
+
+
+
+    }
+    for (int Object = UnitObjectsList.size()-1; Object > -1; Object--)
+    {
+        UnitObjectsList.erase(UnitObjectsList.begin() + Object);
+
+
+
+    }
+    delete PlayerOne;
+
+}

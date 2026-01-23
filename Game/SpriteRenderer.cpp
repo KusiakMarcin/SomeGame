@@ -30,18 +30,15 @@ void SpriteRenderer::DrawSpriteTerrain(glm::mat4 projection,glm::vec2 cameraPos,
 
     // A. Przesuniêcie do pozycji docelowej
     model = glm::translate(model, glm::vec3(position, 0.0f));
-    
-    model = glm::translate(model, glm::vec3(cameraPos, 0.0f));
 
-    // B. Obrót wokó³ œrodka sprite'a
-    // Domyœlnie obrót jest wokó³ (0,0), czyli lewego górnego rogu.
-    // ¯eby obracaæ wokó³ œrodka: przesuwamy œrodek do (0,0), obracamy, przesuwamy z powrotem.
+   
     model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
-    
-    
-   
+
+
+    model = glm::translate(model, glm::vec3(cameraPos, 0.0f));
+
     model = glm::scale(model, glm::vec3(size, 1.0f));
 
     // 2. Ustawienie uniformów
@@ -56,18 +53,14 @@ void SpriteRenderer::DrawSpriteTerrain(glm::mat4 projection,glm::vec2 cameraPos,
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }
-
-void SpriteRenderer::DrawSpriteAnimation(glm::mat4 projection, glm::vec2 cameraPos,Texture2D& texture, Shader shader,
-    glm::vec2 position, int frame, int frameCount,float frameWidth, int mirrored, glm::vec2 size, float rotate, glm::vec3 color)
+void SpriteRenderer::DrawMenuSprite(glm::mat4 projection, Texture2D texture, Shader shader,
+    glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
     // 1. Przygotowanie transformacji
-
     shader.Use();
     shader.SetMatrix4("projection", projection, true);
 
-    // Model Matrix - kolejnoœæ operacji jest kluczowa:
-    // Skalowanie -> Obrót -> Translacja
-    // (W kodzie piszemy odwrotnie, bo macierze mno¿y siê od prawej do lewej)
+    
     glm::mat4 model = glm::mat4(1.0f);
 
     // A. Przesuniêcie do pozycji docelowej
@@ -81,11 +74,48 @@ void SpriteRenderer::DrawSpriteAnimation(glm::mat4 projection, glm::vec2 cameraP
     model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
+
+
+    model = glm::scale(model, glm::vec3(size, 1.0f));
+
+    // 2. Ustawienie uniformów
+    shader.SetMatrix4("model", model);
+    shader.SetVector3f("ourColor", color);
+    shader.SetMatrix4("projection", projection);
+    
+
+    // 3. Rysowanie
+    glActiveTexture(GL_TEXTURE0);
+    texture.Bind(); // Zak³adamy metodê Bind() w klasie Texture2D
+
+    glBindVertexArray(this->quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+}
+void SpriteRenderer::DrawSpriteAnimation(glm::mat4 projection, glm::vec2 cameraPos,Texture2D& texture, Shader shader,
+    glm::vec2 position, int frame, int frameCount,float frameWidth, int mirrored, glm::vec2 size, float rotate, glm::vec3 color)
+{
+    // 1. Przygotowanie transformacji
+
+    shader.Use();
+    shader.SetMatrix4("projection", projection, true);
+
+    
+    glm::mat4 model = glm::mat4(1.0f);
+
+    
+    model = glm::translate(model, glm::vec3(position, 0.0f));
+
+
+
+   
+    model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
+    model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
     model = glm::translate(model, glm::vec3(cameraPos, 0.0f));
 
     model = glm::scale(model, glm::vec3(size, 1.0f));
     
-    // 2. Ustawienie uniformów
     shader.SetMatrix4("model", model);
     shader.SetVector3f("ourColor", color);
     shader.SetVector2f("textOffset", frameWidth*(frame%frameCount), 0.0f);
@@ -93,7 +123,7 @@ void SpriteRenderer::DrawSpriteAnimation(glm::mat4 projection, glm::vec2 cameraP
     shader.SetFloat("textWidth", frameWidth);
     
 
-    // 3. Rysowanie
+  
     glActiveTexture(GL_TEXTURE0);
     texture.Bind(); 
 
@@ -119,7 +149,22 @@ void SpriteRenderer::DrawSpriteAnimation(glm::mat4 projection, glm::vec2 cameraP
     }
 }
 
+void SpriteRenderer::GameOver(Texture2D& texture, Shader shader)
+{
+    // 1. Przygotowanie transformacji
 
+    shader.Use();
+    
+    glActiveTexture(GL_TEXTURE0);
+    texture.Bind(); // Zak³adamy metodê Bind() w klasie Texture2D
+
+   
+    glBindVertexArray(this->quadVAOMirroredY);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+       
+        
+}
 void SpriteRenderer::DrawSprite(glm::mat4 projection,glm::vec2 cameraPos , Texture2D& texture, Shader shader,
     glm::vec2 position,int mirrored, glm::vec2 size, float rotate, glm::vec3 color)
 {
@@ -128,9 +173,6 @@ void SpriteRenderer::DrawSprite(glm::mat4 projection,glm::vec2 cameraPos , Textu
     shader.Use();
     shader.SetMatrix4("projection", projection, true);
 
-    // Model Matrix - kolejnoœæ operacji jest kluczowa:
-    // Skalowanie -> Obrót -> Translacja
-    // (W kodzie piszemy odwrotnie, bo macierze mno¿y siê od prawej do lewej)
     glm::mat4 model = glm::mat4(1.0f);
 
     // A. Przesuniêcie do pozycji docelowej
@@ -184,7 +226,7 @@ void SpriteRenderer::initRenderData()
 {
     // Konfiguracja wierzcho³ków dla prostok¹ta (Quad)
     // Format: pos.x, pos.y, tex.x, tex.y
-    // U¿ywamy znormalizowanych wspó³rzêdnych (0 do 1), które potem przeskalujemy macierz¹ Model
+    
     float vertices[] = {
         // pos      // tex
         0.0f, 1.0f, 0.0f, 1.0f,

@@ -89,13 +89,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;$(SolutionDir)\dependencies\freetype\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\glfw\build\src\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\glfw\build\src\Debug;$(SolutionDir)\dependencies\freetype\release dll\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,13 +106,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;$(SolutionDir)\dependencies\freetype\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\glfw\build\src\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\glfw\build\src\Debug;$(SolutionDir)\dependencies\freetype\release dll\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -121,13 +121,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;C:\studia\PGK\projekt\lib\SDL-release-3.2.24\SDL-release-3.2.24\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;$(SolutionDir)\dependencies\freetype\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\glfw\build\src\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\glfw\build\src\Debug;$(SolutionDir)\dependencies\freetype\release dll\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,13 +138,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\studia\PGK\projekt\SomeGame\SomeGame\dependencies\glm-1.0.2\glm;$(SolutionDir)\dependencies\glad\include;$(SolutionDir)\dependencies\glfw\include;$(SolutionDir)\dependencies\freetype\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\glfw\build\src\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\glfw\build\src\Debug;$(SolutionDir)\dependencies\freetype\release dll\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -153,25 +153,23 @@
     <ClCompile Include="Crawler.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Flyer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Inteligent.cpp" />
+    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Phisics.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Sentry.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
-    <ClCompile Include="sprite_anim.vrtx">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
@@ -181,46 +179,25 @@
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="Enemies.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Flyer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Inteligent.h" />
+    <ClInclude Include="Interface.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Phisics.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Sentry.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Unit.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\vertex.vrtx" />
-    <None Include="CordVertex.vrtx" />
-    <None Include="frag.frag" />
-    <None Include="Gun.frag" />
-    <None Include="Gun.vrtx" />
-    <None Include="rotationvertex.frag" />
-    <None Include="rotationvertex.vrtx" />
-    <None Include="SpriteAnimation.frag" />
-    <None Include="SpriteAnimation.vrtx" />
-    <None Include="Sprite.frag">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="Sprite.vrtx">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="Terrain.frag" />
-    <None Include="Terrain.vrtx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

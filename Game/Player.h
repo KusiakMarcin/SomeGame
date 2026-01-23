@@ -35,6 +35,7 @@ public:
 
     int ID;
     
+    
 
     float FireRate;
     float IsFiring;

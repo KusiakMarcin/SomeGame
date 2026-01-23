@@ -54,16 +54,12 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="sprite_anim.vrtx" />
     <ClCompile Include="Player.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
@@ -102,6 +98,21 @@
     </ClCompile>
     <ClCompile Include="Crawler.cpp">
       <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Flyer.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sentry.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="TextRenderer.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -156,29 +167,26 @@
     <ClInclude Include="Animation.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Crawler.h">
       <Filter>Header Files\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Enemies.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Sprite.vrtx" />
-    <None Include="Sprite.frag" />
-    <None Include="..\vertex.vrtx" />
-    <None Include="frag.frag" />
-    <None Include="rotationvertex.vrtx" />
-    <None Include="rotationvertex.frag" />
-    <None Include="SpriteAnimation.vrtx" />
-    <None Include="SpriteAnimation.frag" />
-    <None Include="CordVertex.vrtx" />
-    <None Include="Gun.vrtx" />
-    <None Include="Gun.frag" />
-    <None Include="Terrain.vrtx" />
-    <None Include="Terrain.frag" />
+    <ClInclude Include="Flyer.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sentry.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="TextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

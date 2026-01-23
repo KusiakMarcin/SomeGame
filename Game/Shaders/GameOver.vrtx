@@ -1,0 +1,10 @@
+#version 330 core
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoords;
+out vec2 TexCoords;
+void main() {
+    TexCoords = aTexCoords;
+    vec2 tmp = aPos * 2.0f;
+    tmp = tmp - vec2(1.0f,1.0f);
+    gl_Position = vec4(tmp, 0.0, 1.0);
+}

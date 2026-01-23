@@ -283,25 +283,32 @@ void Phisics::ResolveColision(Enemy* MovableObject, GameObject Terrain)
 
     if (OverlapX < OverlapY)
     {
+       
         if (SideX)
         {
-            MovableObject->Position.x = Terrain.Position.x - MovableObject->Size.x;
-            if (MovableObject->Velocity.x > 0.0f)MovableObject->Velocity.x = 0.0f;
+            if (MovableObject->Velocity.x < 0.0f) { //left
+
+                MovableObject->Position.x = Terrain.Position.x - MovableObject->Size.x;
+                MovableObject->Velocity.x = -MovableObject->Velocity.x;
+            }
 
         }
         else
         {
-            MovableObject->Position.x = Terrain.Position.x + Terrain.Size.x;
-            if (MovableObject->Velocity.x < 0.0f)MovableObject->Velocity.x = 0.0f;
-        }
+            if (MovableObject->Velocity.x > 0.0f) { //right
+                MovableObject->Position.x = Terrain.Position.x + Terrain.Size.x;
+                MovableObject->Velocity.x = -MovableObject->Velocity.x;
+            }
 
-        //jesli kolicja w poziomie        
-        if (MovableObject->IsCreeping) {
+        }
+       
+          
+        
             
-           MovableObject->Velocity.x = -MovableObject->Velocity.x;
+         
               
             
-        }
+        
     }
     else
     {
@@ -335,7 +342,7 @@ void Phisics::ResolveColision(Projectile& Object1, Enemy* Object2)
     
     Object2->Hit();
     std::cout << Object2->HP << std::endl;
-    //Object2.Bounce()
+   
     
 
 }

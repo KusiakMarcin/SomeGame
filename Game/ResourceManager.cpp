@@ -6,7 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <vector>
-// W prawdziwym projekcie musisz pobraæ stb_image.h i odkomentowaæ poni¿sze linie:
+
 
 
 // Instancjacja statycznych map
@@ -51,47 +51,46 @@ void ResourceManager::Clear()
 
 Shader ResourceManager::loadShaderFromFile(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile)
 {
-    // 1. Pobierz kod Ÿród³owy z plików
     std::string vertexCode;
     std::string fragmentCode;
     std::string geometryCode;
-    try
-    {
+
+    try {
+        // Otwieramy pliki TYLKO RAZ przez konstruktor
         std::ifstream vertexShaderFile(vShaderFile);
         std::ifstream fragmentShaderFile(fShaderFile);
         std::stringstream vShaderStream, fShaderStream;
 
-        vertexShaderFile.open(vShaderFile);
-        fragmentShaderFile.open(fShaderFile);
-         
+        if (!vertexShaderFile.is_open() || !fragmentShaderFile.is_open()) {
+            std::cout << "ERROR::SHADER: Could not open file: " << vShaderFile << " or " << fShaderFile << std::endl;
+        }
+
         vShaderStream << vertexShaderFile.rdbuf();
         fShaderStream << fragmentShaderFile.rdbuf();
-
-        vertexShaderFile.close();
-        fragmentShaderFile.close();
 
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
 
-        if (gShaderFile != nullptr)
-        {
+        // Debug: SprawdŸmy czy kod nie jest pusty
+        if (vertexCode.empty()) {
+            std::cout << "SHADER: Vertex shader file is empty or not read" << std::endl;
+        }
+
+        if (gShaderFile != nullptr) {
             std::ifstream geometryShaderFile(gShaderFile);
             std::stringstream gShaderStream;
             gShaderStream << geometryShaderFile.rdbuf();
-            geometryShaderFile.close();
             geometryCode = gShaderStream.str();
         }
-    }
-    catch (std::exception e)
-    {
-        std::cout << "ERROR::SHADER: Failed to read shader files" << std::endl;
+    } 
+    catch (std::exception e) {
+        std::cout << "SHADER: Failed to read shader files: " << e.what() << std::endl;
     }
 
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
     const char* gShaderCode = geometryCode.c_str();
 
-    // 2. Utwórz obiekt shadera
     Shader shader;
     shader.Compile(vShaderCode, fShaderCode, gShaderFile != nullptr ? gShaderCode : nullptr);
     return shader;

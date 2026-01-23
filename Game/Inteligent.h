@@ -16,6 +16,7 @@ public:
 	bool IsCreeping;
 	bool IsSpiky;
 	bool IsBoss;
+	bool Updated;
 
 	
 	glm::vec2 Aggro;
@@ -30,7 +31,7 @@ public:
 	//virtual void AtackPattern();
 	//void Atack();
 
-	virtual void UpdatePatterns(GameObject Object);
+	virtual void UpdatePatterns(GameObject Object) ;
 
 	virtual void UpdateCreepingPattern(GameObject ground);
 	virtual void UpdateAggro();

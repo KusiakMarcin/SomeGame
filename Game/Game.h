@@ -3,10 +3,13 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "SpriteRenderer.h"
+#include "Interface.h"
 #include "Player.h"
 #include "Crawler.h"
 #include "Terrain.h"
+#include "Flyer.h"
+#include "Sentry.h"
+
 
 
 // Definicja stanów gry (Menu, Gra, Wygrana itp.)
@@ -14,7 +17,7 @@ enum GameState {
     GAME_ACTIVE,
     GAME_OVER,
     GAME_MENU,
-    GAME_WIN
+    GAME_EXIT
 };
 
 class Game
@@ -55,16 +58,19 @@ public:
     
 
     void LoadLevel(const char* file);
+    void Menu();
 
 private:
    
     void CheckPlayerTerrainColisions();
     void CheckPlayerUnitColisions();
-
+    
 
     void CheckProjectileColisions();
     void CheckUnitTerrainColisions();
     void CheckUnitProjectileColisions();
+
+    void GameOverClear();
 };
 
 #endif

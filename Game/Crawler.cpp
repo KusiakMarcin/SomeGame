@@ -9,13 +9,22 @@ Crawler::Crawler(int id, glm::vec2 pos, glm::vec2 size, glm::vec2 hitbox)
     this->Velocity.x = MoveSpeed;
     this->HP = 2;
     FrameCount = 2;
+    FrameWidth = 0.5;
+    Updated = false;
     IsKilled = false;
+    ClassEnemy = "Crawler";
+    Aggro = glm::vec2(150.0f, this->Size.y);
 
 }
 
-void Enemy::Update(float dt) 
+void Crawler::Update(float dt, Player& player)
 {
+
     if (HP < 1) IsKilled = true;
+    
+    
+    
+    
     if (this->Velocity.x == 0.0f && this->Velocity.y == 0.0f) this->IsMoving = false;
     else this->IsMoving = true;
 
@@ -44,11 +53,30 @@ void Enemy::Update(float dt)
         this->currentFrame++;
         FrameRate = 1.0f / 8.0f;
     }
-    if ((CreepingRange.x > Position.x) || (Position.x > CreepingRange.y-Size.x))
-        
+    
+    //std::cout << "creeping:" << CreepingRange.x << "," << CreepingRange.y << std::endl;
+    
+    //std::cout << "Position:" << Position.x << "," <<Position.y << std::endl;
+    
+    if ((CreepingRange.x > Position.x) || (Position.x > CreepingRange.y - Size.x))
         Velocity.x = -Velocity.x;
-    UpdateAggro();
-   
+    if (Velocity.x > MoveSpeed) Velocity.x = Velocity.x / 2.0;
+    this->UpdateAggro(); 
+
+    glm::vec2 playerCenter = player.Position + player.Size / 2.0f;
+    glm::vec2 toPlayer = playerCenter - this->AggroCenter;
+    float distance = glm::length(toPlayer);
+
+    // Sprawdzanie czy gracz jest w zasiêgu Aggro
+    if (std::abs(toPlayer.x) < Aggro.x && std::abs(toPlayer.y) < Aggro.y) {
+        PlayerDetected = true;
+        
+     
+    }
+    else {
+        PlayerDetected = false;
+        
+    }
     
     //std::cout << this->HP << std::endl;
 
@@ -63,35 +91,44 @@ void Enemy::Update(float dt)
 
 }
 
+void Crawler::Atack()
+{
 
-void Inteligent::UpdateAggro()
+
+    ;
+
+}
+
+void Crawler::UpdateAggro()
 {
     
-	AggroCenter = this->Position + this->Size / 2.0f;
+	AggroCenter = this->Position + this->Size / 2.0f+(IsFacingLeft ? glm::vec2(150.0f, 0.0f) : -glm::vec2(150.0f, 0.0f));
 	
 
 }
 
 
-void Inteligent::UpdatePatterns(GameObject Object)
+void Crawler::UpdatePatterns(GameObject Object)
 {
-
-    UpdateCreepingPattern(Object);
     
-   
+    
+        UpdateCreepingPattern(Object);
+        Updated = true;
+    
     
 
 
 
 }
 
-void Inteligent::UpdateCreepingPattern(GameObject ground)
+void Crawler::UpdateCreepingPattern(GameObject ground)
 
 {
     
     if (this->IsGrounded)
     {
         CreepingRange = glm::vec2(ground.Position.x, ground.Position.x + ground.Size.x);
+        
     }
     
     

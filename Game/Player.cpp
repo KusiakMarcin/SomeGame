@@ -16,6 +16,7 @@ Player::Player(glm::vec2 pos, glm::vec2 size, Texture2D sprite,
     IsKilled = false;
     HP = 3;
     
+    
 }
 
 void Player::DrawAnimation(SpriteRenderer& renderer,Texture2D sprite, Shader shader, glm::mat4 projection)
@@ -134,7 +135,7 @@ void Player::Update(float dt)
     {
 
         WasHit -= dt;
-        Color = glm::vec3(1.0f, 0.1f, 0.1f);
+        Color = glm::vec3(1.0f, 0.0f, 0.0f);
     }
     else Color = glm::vec3(1.0f, 1.0f, 1.0f);
 
@@ -184,15 +185,15 @@ Projectile Player::Shoot()
     switch (this->EquipedWeapon) {
      
     case RIFLE:
-        
+        //std::cout << "Rifle" << std::endl;
         float velocityX = 1000.0f * glm::cos(FireAngle);
         float velocityY = 1000.0f * glm::sin(FireAngle);
 
-        std::cout << velocityX << "," << velocityY << std::endl;
+        //std::cout << velocityX << "," << velocityY << std::endl;
         Projectile newProjectile (this->ID, this->Position +glm::vec2(10.0f,30.0f),
             glm::vec2(20.0f, 10.0f),
             glm::vec2(velocityX, velocityY),
-            30000.0f, glm::degrees(FireAngle));
+            1000.0f, glm::degrees(FireAngle));
         this->IsFiring = 1.0f;
         return newProjectile;
         break;

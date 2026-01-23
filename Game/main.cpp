@@ -24,6 +24,7 @@ void LoadTextures();
 // Inicjalizacja obiektu Gry - zmieniliœmy nazwê z Breakout na Platformer dla czytelnoœci
 Game Platformer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
+
 int main(int argc, char* argv[])
 {
     // 1. Konfiguracja GLFW
@@ -70,7 +71,7 @@ int main(int argc, char* argv[])
     Platformer.Init();
 
     
-    float deltaTime = 0.0f;
+     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     double xpos, ypos;
     
@@ -100,11 +101,17 @@ int main(int argc, char* argv[])
         glfwPollEvents();
         
         Platformer.ProcessInput(deltaTime);
+        if (Platformer.State == GAME_ACTIVE) {
+            //std::cout << "Game active" << std::endl;
+            
+            Platformer.Update(deltaTime, xpos, ypos);
+            Platformer.Render(deltaTime);
+        }
+        if(Platformer.State == GAME_EXIT)glfwSetWindowShouldClose(window, true);
+        if (Platformer.State == GAME_MENU) Platformer.Menu();
         
-        Platformer.Update(deltaTime,xpos,ypos);
-        Platformer.Render(deltaTime);
 
-       
+        
         
         
        
@@ -167,19 +174,29 @@ void LoadShaders()
     ResourceManager::LoadShader("Shaders/SpriteAnimation.vrtx","Shaders/SpriteAnimation.frag",nullptr,"SpriteAnimation");
     ResourceManager::LoadShader("Shaders/Sprite.vrtx", "Shaders/Sprite.frag", nullptr, "Sprite");
     ResourceManager::LoadShader("Shaders/Terrain.vrtx", "Shaders/Terrain.frag", nullptr, "Terrain");
+    ResourceManager::LoadShader("Shaders/GameOver.vrtx", "Shaders/GameOver.frag", nullptr, "GameOver");
+    ResourceManager::LoadShader("Shaders/text.vrtx", "Shaders/text.frag", nullptr, "text");
+    
 }
 
 void LoadTextures()
 {
     
-    ResourceManager::LoadTexture("Assets/dirt.png",true, "Dirt");
-    ResourceManager::LoadTexture("Assets/PlayerAnimation.png",true, "PlayerAnimation",GL_CLAMP_TO_EDGE);
+    ResourceManager::LoadTexture("Assets/Dirt.png",true, "Dirt");
+    ResourceManager::LoadTexture("Assets/Magma.png", true, "Magma");
+    ResourceManager::LoadTexture("Assets/Wood.png", true, "Wood");
+    ResourceManager::LoadTexture("Assets/PlayerAnimation.png",true, "PlayerAnimation");
     ResourceManager::LoadTexture("Assets/PlayerIdle.png", true, "PlayerIdle");
     ResourceManager::LoadTexture("Assets/Rifle.png",true, "Rifle");
     ResourceManager::LoadTexture("Assets/CrossHair.png", true, "CrossHair");
     ResourceManager::LoadTexture("Assets/Projectile.png", true, "Projectile");
     ResourceManager::LoadTexture("Assets/Crawler.png", true, "Crawler");
-
+    ResourceManager::LoadTexture("Assets/GameOver.png", true, "GameOver");
+    ResourceManager::LoadTexture("Assets/Heart.png", true, "Heart");
+    ResourceManager::LoadTexture("Assets/MedKit.png", true, "Medkit");
+    ResourceManager::LoadTexture("Assets/Flyer.png", true, "Flyer");
+    ResourceManager::LoadTexture("Assets/Sentry.png", true, "Sentry");
+    ResourceManager::LoadTexture("Assets/Canon.png", true, "Canon");
     
     
 }

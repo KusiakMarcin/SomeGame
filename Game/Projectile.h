@@ -21,7 +21,7 @@ public:
 	glm::vec2 Velocity;
 	double FireRange;
 	
-	
+	Projectile();
 	Projectile(int sourceID,glm::vec2 pos, glm::vec2 size, glm::vec2 velocity, float fireRange, float rotation = 0.0);
 	
 	void Update(float dt);

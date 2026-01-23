@@ -40,7 +40,7 @@ public:
     // rotate: k¹t obrotu w stopniach
     // 
     // color: kolor tintu (domyœlnie bia³y - brak zmiany)
-    
+    void GameOver(Texture2D& texture, Shader shader);
     void DrawSpriteAnimation(glm::mat4 projection, glm::vec2 cameraPos, Texture2D& texture, Shader shader,
         glm::vec2 position,
         int frame,
@@ -64,7 +64,11 @@ public:
         float rotate = 0.0f,
         glm::vec3 color = glm::vec3(1.0f));
 
-  
+    void DrawMenuSprite(glm::mat4 projection, Texture2D texture, Shader shader,
+        glm::vec2 position,
+        glm::vec2 size = glm::vec2(10.0f, 10.0f),
+        float rotate = 0.0f,
+        glm::vec3 color = glm::vec3(1.0f));
     
     glm::vec2 Tiling(glm::vec2 size, float tileSize = 50.0f);
     
